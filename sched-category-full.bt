@@ -1,0 +1,49 @@
+/*
+ * SPDX-License-Identifer: GPL-2.0-only
+ * Copyright (C) 2022 Advanced Micro Devices, Inc.
+ *
+ * Authors: Wyes Karny <wyes.karny@amd.com>,
+ *          Gautham R Shenoy <gautham.shenoy@amd.com>,
+ * 		    K Prateek Nayak <kprateek.nayak@amd.com>
+ *
+ * Usage: sudo bpftrace sched-category-full.bt -o [outputfile]
+ *
+ */
+
+tracepoint:sched:sched_waking
+{
+	/* We now need to compute the incoming tasks on-rq waittime or post-wake waittime. But only for the interesting tasks */
+	if (args->pid == 0) {
+		return;
+	}
+
+	/* There are multiple concurrent waking events. Only consider the very first one */
+	if (@waking_track[args->pid] == 1) {
+		return;
+	}
+
+	@waking_graph[comm, tid, args->comm, args->pid] = count();
+
+	@waking_track[args->pid] = 1;
+}
+
+tracepoint:sched:sched_migrate_task
+{
+	$dest_cpu = (uint32)args->dest_cpu;
+	$orig_cpu = (uint32)args->orig_cpu;
+	$is_waking = @waking_track[args->pid];
+
+    @waking_track[args->pid] = 0;
+
+	if ($dest_cpu == $orig_cpu) {
+		return;
+	}
+
+	@migrations[args->pid, $orig_cpu, $dest_cpu, $is_waking] = count();
+}
+
+END
+{
+	/* We don't care about these dictionaries */
+	clear(@waking_track);
+}
