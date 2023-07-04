@@ -133,6 +133,7 @@ if [ $BPF_NEEDED == 1 ]
 then
     export BPFTRACE_MAP_KEYS_MAX=$MAX_PIDS
 
+    command -v bpftrace >/dev/null 2>&1 && ln -s $(which bpftrace) bpftrace
     if [ ! -f $SCRIPTDIR/bpftrace ]
     then
 	    echo "Downloading bpftrace v0.16.0...."
