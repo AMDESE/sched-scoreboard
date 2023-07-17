@@ -107,6 +107,10 @@ SCRIPTDIR=`dirname "$0"`;
 
 mkdir -p $LOGDIR
 
+if ! grep -Fxq "Y" /sys/kernel/debug/sched/verbose; then
+    echo 'Y' >/sys/kernel/debug/sched/verbose
+fi
+
 if [ -d /sys/kernel/debug/sched/domains/cpu0 ]
 then
     grep . /sys/kernel/debug/sched/domains/cpu0/domain*/name | sed -e 's/\/sys\/kernel\/debug\/sched\/domains\/cpu0\///g' | sed -e 's/\/name//g' > $LOGDIR/domain_map.cfg
