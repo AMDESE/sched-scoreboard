@@ -107,9 +107,8 @@ SCRIPTDIR=`dirname "$0"`;
 
 mkdir -p $LOGDIR
 
-if ! grep -Fxq "Y" /sys/kernel/debug/sched/verbose; then
-    echo 'Y' >/sys/kernel/debug/sched/verbose
-fi
+old_sched_verbose=`cat /sys/kernel/debug/sched/verbose`
+echo 'Y' > /sys/kernel/debug/sched/verbose
 
 if [ -d /sys/kernel/debug/sched/domains/cpu0 ]
 then
@@ -118,6 +117,8 @@ elif [ -d /proc/sys/kernel/sched_domain/cpu0 ]
 then
     grep . /proc/sys/kernel/sched_domain/cpu0/domain*/name | sed -e 's/\/proc\/sys\/kernel\/sched_domain\/cpu0\///g' | sed -e 's/\/name//g' > $LOGDIR/domain_map.cfg
 fi
+
+echo $old_sched_verbose > /sys/kernel/debug/sched/verbose
 
 TIMESTAMP=`date +%Y-%m-%d\ %H:%M:%S`
 echo "[$TIMESTAMP] Snapshotting schedstats before..."
