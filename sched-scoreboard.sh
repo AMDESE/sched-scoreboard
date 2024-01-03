@@ -103,7 +103,7 @@ else
     echo "command to be executed : $command"
 fi
 
-SCRIPTDIR=`dirname "$0"`;
+SCRIPTDIR=`dirname $(realpath "$0")`;
 
 mkdir -p $LOGDIR
 
@@ -154,10 +154,7 @@ then
         CONFIG_FILE=""
         if [ -f /proc/config.gz ]
         then
-            cp /proc/config.gz $LOGDIR
-            cd $LOGDIR
-            gunzip config.gz
-            mv -f config config-$VERSION
+            gunzip -c /proc/config.gz > $LOGDIR/config-$VERSION
             CONFIG_FILE=$LOGDIR/config-$VERSION
             ORIG_CONFIG_FILE="/proc/config.gz"
         elif [ -f /boot/config-$VERSION ]
