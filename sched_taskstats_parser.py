@@ -169,8 +169,11 @@ def get_topology(logdir):
     domain_interval = {}
     cur_cpu = str
 
+    ver = -1
     for line in fin.readlines():
         tokens = line.split()
+        if tokens[0].startswith('version'):
+            ver = tokens[1].strip()
 
         if tokens[0].startswith('cpu'):
             cur_cpu = tokens[0]
@@ -178,8 +181,13 @@ def get_topology(logdir):
             domain_interval = {}
 
         elif tokens[0].startswith('domain'):
+            cpumask = ""
+            if int(ver) >= 17:
+                cpumask = tokens[2]
+            else:
+                cpumask = tokens[1]
 
-            cpumask_tokens = tokens[1].split(',')
+            cpumask_tokens = cpumask.split(',')
             factor = 0
             cpus = []
 

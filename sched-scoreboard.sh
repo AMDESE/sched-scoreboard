@@ -11,7 +11,6 @@ POSITIONAL_ARGS=()
 
 TIMESTAMP=`date +%Y-%m-%d-%H-%M-%S`
 LOGDIR=/tmp/sched-scoreboard-$TIMESTAMP
-command="sleep 1"
 
 TASK_STATS_DISABLE=0
 TASK_STATS_FORCE_ENABLE=0
@@ -140,8 +139,8 @@ then
 
     if [ ! -f $SCRIPTDIR/bpftrace ]
     then
-	    echo "Downloading bpftrace v0.16.0...."
-	    wget https://github.com/iovisor/bpftrace/releases/download/v0.16.0/bpftrace
+	    echo "Downloading bpftrace v0.17.0...."
+	    wget https://github.com/iovisor/bpftrace/releases/download/v0.17.0/bpftrace
 	    mv bpftrace $SCRIPTDIR
 	    chmod +x $SCRIPTDIR/bpftrace
     fi
@@ -222,6 +221,7 @@ function handle_signal () {
 TIMESTAMP=`date +%Y-%m-%d\ %H:%M:%S`
 echo "[$TIMESTAMP] Kickstarting the test with : $command"
 trap 'handle_signal' SIGINT
+sleep 1
 $command&
 COMMAND_PID=$!
 wait $COMMAND_PID

@@ -1,0 +1,336 @@
+{
+	"cpu_keys" : [
+		{
+			"key"        : "yield",
+			"is_derived" : 0,
+			"desc"       : "sched_yield count                                         ",
+			"input_pos"  : 1
+		},
+		{
+			"key"        : "array_exp",
+			"is_derived" : 0,
+			"desc"       : "Legacy counter can be ignored                             ",
+			"input_pos"  : 2
+		},
+		{
+			"key"        : "sched_count",
+			"is_derived" : 0,
+			"desc"       : "schedule called                                           ",
+			"input_pos"  : 3
+		},
+		{
+			"key"        : "sched_idle",
+			"is_derived" : 0,
+			"desc"       : "schedule left the processor idle                          ",
+			"input_pos"  : 4,
+			"pct_on"     : "sched_count"
+		},
+		{
+			"key"        : "ttwu_count",
+			"is_derived" : 0,
+			"desc"       : "try_to_wake_up was called                                 ",
+			"input_pos"  : 5
+		},
+		{
+			"key"        : "l_ttwu_count",
+			"is_derived" : 0,
+			"desc"       : "try_to_wake_up was called to wake up the local cpu        ",
+			"input_pos"  : 6,
+			"pct_on"     : "ttwu_count"
+		},
+		{
+			"key"        : "busy_time",
+			"is_derived" : 0,
+			"desc"       : "total runtime by tasks on this processor (in ns)          ",
+			"input_pos"  : 7
+		},
+		{
+			"key"        : "wait_time",
+			"is_derived" : 0,
+			"desc"       : "total waittime by tasks on this processor (in ns)         ",
+			"input_pos"  : 8,
+			"pct_on"     : "busy_time"
+		},
+		{
+			"key"        : "num_tsl",
+			"is_derived" : 0,
+			"desc"       : "total timeslices run on this cpu                          ",
+			"input_pos"  : 9
+		}
+	],
+	"domain_keys" : [
+		{
+			"key"        : "idle_lb_count",
+			"is_derived" : 0,
+			"desc"       : "load_balance count on cpu idle                            ",
+			"input_pos"  : 1
+		},
+		{
+			"key"        : "idle_lb_failed_count",
+			"is_derived" : 0,
+			"desc"       : "load_balance found balanced on cpu idle                   ",
+			"input_pos"  : 2
+		},
+		{
+			"key"        : "idle_lb_failed_bqnf",
+			"is_derived" : 0,
+			"desc"       : "  ->load_balance failed to find busier queue on cpu idle  ",
+			"input_pos"  : 7
+		},
+		{
+			"key"        : "idle_lb_failed_bgnf",
+			"is_derived" : 0,
+			"desc"       : "  ->load_balance failed to find busier group on cpu idle  ",
+			"input_pos"  : 8
+		},
+		{
+			"key"        : "idle_lb_task_mv_failed",
+			"is_derived" : 0,
+			"desc"       : "load_balance move task failed on cpu idle                 ",
+			"input_pos"  : 3
+		},
+		{
+			"key"        : "idle_success_count",
+			"is_derived" : 1,
+			"desc"       : "*load_balance success count on cpu idle                   ",
+			"function"   : "a[0] - a[1] - a[2]",
+			"values"     : ["idle_lb_count", "idle_lb_failed_count", "idle_lb_task_mv_failed"]
+		},
+		{
+			"key"        : "idle_imb_sum",
+			"is_derived" : 0,
+			"desc"       : "imbalance sum on cpu idle                                 ",
+			"input_pos"  : 4,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "idle_pull_task_count",
+			"is_derived" : 0,
+			"desc"       : "pull_task count on cpu idle                               ",
+			"input_pos"  : 5,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "idle_gained_avg",
+			"is_derived" : 1,
+			"desc"       : "*avg task pulled per successful lb attempt (cpu idle)    ",
+			"function"   : "0 if (a[0] - a[1] - a[2]) == 0 else a[3] / (a[0] - a[1] - a[2])",
+			"values"     : ["idle_lb_count", "idle_lb_failed_count", "idle_lb_task_mv_failed", "idle_pull_task_count"],
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "idle_pull_task_ch_count",
+			"is_derived" : 0,
+			"desc"       : "  ->pull_task when target task was cache-hot on cpu idle  ",
+			"input_pos"  : 6,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "busy_lb_count",
+			"is_derived" : 0,
+			"desc"       : "load_balance count on cpu busy                            ",
+			"input_pos"  : 9
+		},
+		{
+			"key"        : "busy_lb_failed_count",
+			"is_derived" : 0,
+			"desc"       : "load_balance found balanced on cpu busy                   ",
+			"input_pos"  : 10
+		},
+		{
+			"key"        : "busy_lb_failed_bqnf",
+			"is_derived" : 0,
+			"desc"       : "  ->load_balance failed to find busier queue on cpu busy  ",
+			"input_pos"  : 15
+		},
+		{
+			"key"        : "busy_lb_failed_bgnf",
+			"is_derived" : 0,
+			"desc"       : "  ->load_balance failed to find busier group on cpu busy  ",
+			"input_pos"  : 16
+		},
+		{
+			"key"        : "busy_lb_task_mv_failed",
+			"is_derived" : 0,
+			"desc"       : "load_balance move task failed on cpu busy                 ",
+			"input_pos"  : 11
+		},
+		{
+			"key"        : "busy_success_count",
+			"is_derived" : 1,
+			"desc"       : "*load_balance success cnt on cpu busy                     ",
+			"function"   : "a[0] - a[1] - a[2]",
+			"values"     : ["busy_lb_count", "busy_lb_failed_count", "busy_lb_task_mv_failed"]
+		},
+		{
+			"key"        : "busy_imb_sum",
+			"is_derived" : 0,
+			"desc"       : "imbalance sum on cpu busy                                 ",
+			"input_pos"  : 12,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "busy_pull_task_count",
+			"is_derived" : 0,
+			"desc"       : "pull_task count on cpu busy                               ",
+			"input_pos"  : 13,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "busy_gained_avg",
+			"is_derived" : 1,
+			"desc"       : "*avg task pulled per successful lb attempt (cpu busy)    ",
+			"function"   : "0 if (a[0] - a[1] - a[2]) == 0 else a[3] / (a[0] - a[1] - a[2])",
+			"values"     : ["busy_lb_count", "busy_lb_failed_count", "busy_lb_task_mv_failed", "busy_pull_task_count"],
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "busy_pull_task_ch_count",
+			"is_derived" : 0,
+			"desc"       : "  ->pull_task when target task was cache-hot on cpu busy  ",
+			"input_pos"  : 14,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "newidle_lb_count",
+			"is_derived" : 0,
+			"desc"       : "load_balance cnt on cpu newly idle                        ",
+			"input_pos"  : 17
+		},
+		{
+			"key"        : "newidle_lb_failed_count",
+			"is_derived" : 0,
+			"desc"       : "load_balance found balanced on cpu newly idle             ",
+			"input_pos"  : 18
+		},
+		{
+			"key"        : "newidle_lb_failed_bqnf",
+			"is_derived" : 0,
+			"desc"       : "  ->load_balance failed to find bsy q on cpu newly idle   ",
+			"input_pos"  : 23
+		},
+		{
+			"key"        : "newidle_lb_failed_bgnf",
+			"is_derived" : 0,
+			"desc"       : "  ->load_balance failed to find bsy grp on cpu newly idle ",
+			"input_pos"  : 24
+		},
+		{
+			"key"        : "newidle_lb_task_mv_failed",
+			"is_derived" : 0,
+			"desc"       : "load_balance move task failed on cpu newly idle           ",
+			"input_pos"  : 19
+		},
+		{
+			"key"        : "newidle_success_count",
+			"is_derived" : 1,
+			"desc"       : "*load_balance success cnt on cpu newidle                  ",
+			"function"   : "a[0] - a[1] - a[2]",
+			"values"     : ["newidle_lb_count", "newidle_lb_failed_count", "newidle_lb_task_mv_failed"]
+		},
+		{
+			"key"        : "newidle_imb_sum",
+			"is_derived" : 0,
+			"desc"       : "imbalances sum on cpu idle                                ",
+			"input_pos"  : 20,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "newidle_pull_task_count",
+			"is_derived" : 0,
+			"desc"       : "pull_task count on cpu newly idle                         ",
+			"input_pos"  : 21,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "newidle_gained_avg",
+			"is_derived" : 1,
+			"desc"       : "*avg task pulled per successful lb attempt (cpu newidle) ",
+			"function"   : "0 if (a[0] - a[1] - a[2]) == 0 else a[3] / (a[0] - a[1] - a[2])",
+			"values"     : ["newidle_lb_count", "newidle_lb_failed_count", "newidle_lb_task_mv_failed", "newidle_pull_task_count"],
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "newidle_pull_task_ch_count",
+			"is_derived" : 0,
+			"desc"       : "  ->pull_task whn target task was cache-hot on cpu newidle",
+			"input_pos"  : 22,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "alb_count",
+			"is_derived" : 0,
+			"desc"       : "active_load_balance count                                 ",
+			"input_pos"  : 25,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "alb_failed_count",
+			"is_derived" : 0,
+			"desc"       : "active_load_balance move task failed                      ",
+			"input_pos"  : 26,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "alb_success_tmv",
+			"is_derived" : 0,
+			"desc"       : "active_load_balance successfully moved a task             ",
+			"input_pos"  : 27,
+			"drop_stats" : 1
+		},
+		{
+			"key"        : "sbe_count",
+			"is_derived" : 0,
+			"desc"       : "sbe_count is not used                                     ",
+			"input_pos"  : 28
+		},
+		{
+			"key"        : "sbe_balanced",
+			"is_derived" : 0,
+			"desc"       : "sbe_balanced is not used                                  ",
+			"input_pos"  : 29
+		},
+		{
+			"key"        : "sbe_pushed",
+			"is_derived" : 0,
+			"desc"       : "sbe_pushed is not used                                    ",
+			"input_pos"  : 30
+		},
+		{
+			"key"        : "sbf_count",
+			"is_derived" : 0,
+			"desc"       : "sbf_count is not used                                       ",
+			"input_pos"  : 31
+		},
+		{
+			"key"        : "sbf_balanced",
+			"is_derived" : 0,
+			"desc"       : "sbf_balanced is not used                                  ",
+			"input_pos"  : 32
+		},
+		{
+			"key"        : "sbf_pushed",
+			"is_derived" : 0,
+			"desc"       : "sbf_pushed is not used                                    ",
+			"input_pos"  : 33
+		},
+		{
+			"key"        : "ttwu_awoke_task_dcsd",
+			"is_derived" : 0,
+			"desc"       : "try_to_wake_up() awoke a task that last ran on a diff cpu ",
+			"input_pos"  : 34
+		},
+		{
+			"key"        : "ttwu_mv_task_cc",
+			"is_derived" : 0,
+			"desc"       : "try_to_wake_up() moved task because cache-cold on own cpu ",
+			"input_pos"  : 35
+		},
+		{
+			"key"        : "ttwu_pb",
+			"is_derived" : 0,
+			"desc"       : "try_to_wake_up() started passive balancing                ",
+			"input_pos"  : 36
+		}
+	]
+}
